@@ -16,7 +16,7 @@ private static Connection connexioBD = null;
 
         String servidor = "jdbc:mysql://localhost:3306/";
         String usuari = "root";
-        String passwd = "345697Alex";
+        String passwd = "";
         String bbdd = "esqui";
 
         try {

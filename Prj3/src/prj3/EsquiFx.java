@@ -39,12 +39,19 @@ public class EsquiFx extends Application {
     
     private static ArrayList Clients = new ArrayList<Client>();
     private static ArrayList Colectius = new ArrayList<CursColectiu>();
+    private static ArrayList Competitius = new ArrayList<CursCompetitiu>();
+    private static ArrayList Individuals = new ArrayList<CursIndividual>();
     
     
     TextField txtDni = new TextField();
     TextField txtNom = new TextField();
     TextField txtCognom = new TextField();
-    
+    TextField txtCognom2 = new TextField();
+    TextField txtData_naix = new TextField();
+    TextField txtUsuari = new TextField();
+    TextField txtContrasenya = new TextField();
+    TextField txtSexe = new TextField();
+    TextField txtMail = new TextField();
     TextField txtMaxParticipantsCol  = new TextField();
     TextField txtPreuCol  = new TextField();
     
@@ -100,10 +107,22 @@ public class EsquiFx extends Application {
         Label lblDni = new Label ("DNI");
         Label lblNom= new Label("Nom");
         Label lblCognom= new Label("Cognom");
+        Label lblCognom2 = new Label ("Cognom2");
+        Label lblData= new Label("Data naixement");
+        Label lblUsuari= new Label("Usuari");
+        Label lblContrasenya = new Label ("Contrasenya");
+        Label lblSexe = new Label("Sexe");
+        Label lblMail= new Label("Mail");
         
         txtDni = new TextField();
         txtNom = new TextField();
         txtCognom = new TextField();
+        txtCognom2 = new TextField();
+        txtData_naix = new TextField();
+        txtUsuari = new TextField();
+        txtContrasenya = new TextField();
+        txtSexe = new TextField();
+        txtMail = new TextField();
         
         gp.add(lblDni, 0, 0);
         gp.add(txtDni, 1, 0);
@@ -111,6 +130,18 @@ public class EsquiFx extends Application {
         gp.add(txtNom, 1, 1);
         gp.add(lblCognom, 0, 2);
         gp.add(txtCognom, 1, 2);
+        gp.add(lblCognom2, 0, 3);
+        gp.add(txtCognom2, 1, 3);
+        gp.add(lblData, 0, 4);
+        gp.add(txtData, 1, 4);
+        gp.add(lblUsuari, 0, 5);
+        gp.add(txtUsuari, 1, 5);        
+        gp.add(lblContrasenya, 0, 6);
+        gp.add(txtContrasenya, 1, 6);        
+        gp.add(lblSexe, 0, 7);
+        gp.add(txtSexe, 1, 7);        
+        gp.add(lblMail, 0, 8);
+        gp.add(txtMail, 1, 8);        
         
         return gp;
     }
@@ -146,12 +177,24 @@ public class EsquiFx extends Application {
         TableColumn<Client, String> colDni =  new TableColumn<>("DNI");
         TableColumn<Client, String> colNom =  new TableColumn<>("Nom");
         TableColumn<Client, String> colCognom =  new TableColumn<>("Cognom");
+        TableColumn<Client, String> colCognom2 =  new TableColumn<>("Cognom2");
+        TableColumn<Client, LocalDate> dataNaix =  new TableColumn<>("Data naixement");
+        TableColumn<Client, String> usuari =  new TableColumn<>("Usuari");
+        TableColumn<Client, String> pass =  new TableColumn<>("Contrasenya");
+        TableColumn<Client, String> sex =  new TableColumn<>("Sexe");
+        TableColumn<Client, String> mail =  new TableColumn<>("Mail");
         
         tblVehicles.getColumns().addAll(colDni, colNom, colCognom);
         
         colDni.setCellValueFactory(new PropertyValueFactory<>("dni"));
         colNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
         colCognom.setCellValueFactory(new PropertyValueFactory<>("cognom"));
+        colCognom2.setCellValueFactory(new PropertyValueFactory<>("cognom2"));
+        dataNaix.setCellValueFactory(new PropertyValueFactory<>("datanaixemnt"));
+        usuari.setCellValueFactory(new PropertyValueFactory<>("usuari"));
+        pass.setCellValueFactory(new PropertyValueFactory<>("contrasenya"));
+        sex.setCellValueFactory(new PropertyValueFactory<>("sexe"));
+        mail.setCellValueFactory(new PropertyValueFactory<>("email"));
         
         this.getClient();
         
@@ -169,6 +212,12 @@ public class EsquiFx extends Application {
                     txtDni.setText(client.getDni()); //txtMarca es un text field
                     txtNom.setText(client.getNom());
                     txtCognom.setText(client.getCognom());
+                    txtCognom2.setText(client.getCognom2());
+                    txtData.setText(client.getDatanaixemnt().toString());
+                    txtUsuari.setText(client.getUsuari());
+                    txtContrasenya.setText(client.getContrasenya());
+                    txtSexe.setText(client.getSexe());
+                    txtMail.setText(client.getEmail());
                 }
             }
         });
@@ -301,17 +350,149 @@ public class EsquiFx extends Application {
         }
     }  
     
-    private Pane cursosCompeticio(){
+        /**
+     * @throws SQLException
+     */
+    public static void getCursCompetitiu() throws SQLException {
+
         
+
+        String SQL = "SELECT cl.id_curs as idCl, cl.nivell as nivell, cl.preu_comp as preu, cu.id_curs as idCu, cu.dni_monitor as dniCu, cu.nom as nom,"
+                + " cu.descripcio as descripcio, cu.data_inici as dataIni, cu.preu_hora as preuHora"
+                + " FROM curs_competitiu as cl"
+                + " INNER JOIN curs as cu ON cl.id_curs = cu.id_curs ;";
+
+        PreparedStatement ps = ct.prepareStatement(SQL);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            CursCompetitiu cl = new CursCompetitiu();
+            
+            cl.setId_curs(rs.getInt("idCl"));
+            cl.setNivell(rs.getString("nivell"));
+            cl.setPreuCompeticio(rs.getInt("preu"));
+            cl.setDni_monitor(rs.getString("dniCu"));
+            cl.setNom_curs(rs.getString("nom"));
+            cl.setDescripcio(rs.getString("descripcio"));
+            cl.setData_inici(rs.getDate("dataIni").toLocalDate());
+            cl.setPreu_hora(rs.getInt("preuHora"));
+            
+            Competitius.add(cl);
+            System.out.println(cl.toString());
+        }
+    }      
+
+    public static void getCursIndividual() throws SQLException {
+
         
-        
-        return null;
-    }
+
+        String SQL = "SELECT cl.id_curs as idCl, cu.id_curs as idCu, cu.dni_monitor as dniCu, cu.nom as nom,"
+                + " cu.descripcio as descripcio, cu.data_inici as dataIni, cu.preu_hora as preuHora"
+                + " FROM curs_individual as cl"
+                + " INNER JOIN curs as cu ON cl.id_curs = cu.id_curs ;";
+
+        PreparedStatement ps = ct.prepareStatement(SQL);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            CursIndividual cl = new CursIndividual();
+            
+            cl.setId_curs(rs.getInt("idCl"));
+            cl.setDni_monitor(rs.getString("dniCu"));
+            cl.setNom_curs(rs.getString("nom"));
+            cl.setDescripcio(rs.getString("descripcio"));
+            cl.setData_inici(rs.getDate("dataIni").toLocalDate());
+            cl.setPreu_hora(rs.getInt("preuHora"));
+            
+            Individuals.add(cl);
+            System.out.println(cl.toString());
+        }
+    }         
     
-    private Pane cursosIndividuals(){
+    private Pane cursosCompeticio() throws SQLException{
+        
+        VBox vb = new VBox();
+        
+        TableView<CursColectiu> tblCursosCol = new TableView<>();
+        TableColumn<CursColectiu, String> colIdCurs =  new TableColumn<>("ID");
+        TableColumn<CursColectiu, String> colNom =  new TableColumn<>("Nom");
+        TableColumn<CursColectiu, String> colData =  new TableColumn<>("Data Inici");
+        TableColumn<CursColectiu, String> colIdMonitor = new TableColumn<>("Número Monitor");
+        TableColumn<CursColectiu, String> colMaxPart = new TableColumn<>("Nivell");
+        TableColumn<CursColectiu, String> colPreuCol = new TableColumn<>("Preu");
+        
+        tblCursosCol.getColumns().addAll(colIdCurs, colNom, colData, colIdMonitor, colMaxPart, colPreuCol);
+        
+        colIdCurs.setCellValueFactory(new PropertyValueFactory<>("id_curs"));
+        colNom.setCellValueFactory(new PropertyValueFactory<>("nom_curs"));
+        colData.setCellValueFactory(new PropertyValueFactory<>("data_inici"));
+        colIdMonitor.setCellValueFactory(new PropertyValueFactory<>("dni_monitor"));
+        colMaxPart.setCellValueFactory(new PropertyValueFactory<>("nivell"));
+        colPreuCol.setCellValueFactory(new PropertyValueFactory<>("preuCompeticio"));
+        
+         this.getCursCompetitiu();
+        tblCursosCol.getItems().addAll(Competitius);
+        System.out.println(Competitius.toString());
+        vb.getChildren().add(tblCursosCol);
+        
+        tblCursosCol.getSelectionModel().selectedItemProperty().addListener(new ChangeListener(){
+        @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue){
+            CursCompetitiu crsCol = (CursCompetitiu) newValue;
+      
+                if (crsCol != null){
+                    txtIdCurs.setText(Integer.toString(crsCol.getId_curs()));
+                    txtNomCurs.setText(crsCol.getNom_curs());
+                    txtData.setText(String.valueOf(crsCol.getData_inici()));
+                    txtIdMonitor.setText(String.valueOf(crsCol.getDni_monitor()));
+                    txtMaxParticipantsCol.setText(String.valueOf(crsCol.getNivell()));
+                    txtPreuCol.setText(String.valueOf(crsCol.getPreuCompeticio()));
+                }
+            }
+        });
+        
+        return vb;
+    }
+        
+    
+    private Pane cursosIndividuals() throws SQLException{
+      VBox vb = new VBox();
+        
+        TableView<CursColectiu> tblCursosCol = new TableView<>();
+        TableColumn<CursColectiu, String> colIdCurs =  new TableColumn<>("ID");
+        TableColumn<CursColectiu, String> colNom =  new TableColumn<>("Nom");
+        TableColumn<CursColectiu, String> colData =  new TableColumn<>("Data Inici");
+        TableColumn<CursColectiu, String> colIdMonitor = new TableColumn<>("Número Monitor");
+        TableColumn<CursColectiu, String> colMaxPart = new TableColumn<>("Preu");
         
         
+        tblCursosCol.getColumns().addAll(colIdCurs, colNom, colData, colIdMonitor, colMaxPart);
         
-        return null;
+        colIdCurs.setCellValueFactory(new PropertyValueFactory<>("id_curs"));
+        colNom.setCellValueFactory(new PropertyValueFactory<>("nom_curs"));
+        colData.setCellValueFactory(new PropertyValueFactory<>("data_inici"));
+        colIdMonitor.setCellValueFactory(new PropertyValueFactory<>("dni_monitor"));
+        colMaxPart.setCellValueFactory(new PropertyValueFactory<>("preu_hora"));
+        
+         this.getCursIndividual();
+        tblCursosCol.getItems().addAll(Individuals);
+        System.out.println(Individuals.toString());
+        vb.getChildren().add(tblCursosCol);
+        
+        tblCursosCol.getSelectionModel().selectedItemProperty().addListener(new ChangeListener(){
+        @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue){
+            CursIndividual crsCol = (CursIndividual) newValue;
+      
+                if (crsCol != null){
+                    txtIdCurs.setText(Integer.toString(crsCol.getId_curs()));
+                    txtNomCurs.setText(crsCol.getNom_curs());
+                    txtData.setText(String.valueOf(crsCol.getData_inici()));
+                    txtIdMonitor.setText(String.valueOf(crsCol.getDni_monitor()));
+                    txtMaxParticipantsCol.setText(String.valueOf(crsCol.getPreu_hora()));
+
+                }
+            }
+        });
+        
+        return vb;
     }
 }

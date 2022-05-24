@@ -7,6 +7,10 @@ public class CursCompetitiu extends Curs {
     private String nivell;
     private int preuCompeticio;
 
+    public CursCompetitiu(){
+        
+    }
+    
     public CursCompetitiu(String nivell, int preuCompeticio, int id_curs, String dni_monitor, String nom_curs, LocalDate data_inici, String descripcio, int preu_hora) {
         super(id_curs, dni_monitor, nom_curs, data_inici, descripcio, preu_hora);
         this.nivell = nivell;
