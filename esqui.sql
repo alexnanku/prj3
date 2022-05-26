@@ -23,7 +23,7 @@ create table curs(
    
 create table curs_individual(
 	id_curs int(4) not null,
-	primary key (id_curs),
+    primary key (id_curs),
     foreign key (id_curs) references curs(id_curs)
 );
 
@@ -31,7 +31,7 @@ create table curs_colectiu(
 	id_curs int(4) not null,
     aforament int(9),
     preu float, 
-	primary key (id_curs),
+    primary key (id_curs),
     foreign key (id_curs) references curs(id_curs)
 );
 
@@ -39,7 +39,7 @@ create table curs_competitiu(
 	id_curs int(4) not null,
     preu_comp float,
     nivell varchar(50),
-	primary key (id_curs),
+    primary key (id_curs),
     foreign key (id_curs) references curs(id_curs)
 );
 
@@ -64,7 +64,7 @@ create table client_individual(
 
 create table client_colectiu(
 	dni_usuari varchar(9) not null,
-	num_familiar int(12),
+	num_familiar int(12) unique AUTO_INCREMENT,
 	primary key (dni_usuari),
 	foreign key (dni_usuari) references client(dni_usuari)
 );
@@ -106,6 +106,22 @@ create table lloguerCurs_competitiu(
 	primary key (id_curs),
     foreign key (id_curs) references curs_competitiu(id_curs),
     foreign key (dni_usuari) references client_federat(dni_usuari)
+);
+
+create table optar_inv(
+	id_curs int,
+    dni_usuari varchar(9),
+    foreign key (dni_usuari) references client_colectiu(dni_usuari),
+    foreign key (id_curs) references curs_individual(id_curs),
+    primary key (id_curs)
+);
+
+create table optar_col(
+	id_curs int,
+    dni_usuari varchar(9),
+    foreign key (dni_usuari) references client_individual(dni_usuari),
+    foreign key (id_curs) references curs_colectiu(id_curs),
+    primary key (id_curs)
 );
 
 create table producte(
@@ -171,31 +187,39 @@ create table pals(
     foreign key (id_producte) references producte(id_producte)
 );
 
-insert into producte (model, marca, preu, img, num_usos) VALUES 
-('Atris','BLACK CROWS','669','1.png', '0'),
-('Duos Freebird','BLACK CROWS','120','2.png', '0'),
-('Pro 100 BLACK BELLUGA RED','SALOMON','275','3.png', '0');
+create table prod_elim(
+	id_producte int,
+    dni_usuari varchar(9),
+     foreign key (dni_usuari) references client(dni_usuari),
+    primary key (id_producte),
+    foreign key (id_producte) references producte(id_producte)
+);
 
+insert into producte (model, marca, preu, img, num_usos) VALUES 
+('Atris','BLACK CROWS','669','img/1.png', '0'),
+('Duos Freebird','BLACK CROWS','120','img/2.png', '0'),
+('Pro 100 BLACK BELLUGA RED','SALOMON','275','img/3.png', '0');
 
 insert into esqui (id_producte, mida) VALUES 
 ('1','184');
 
 insert into pals (id_producte, altura) VALUES 
-('1','140');
+('2','140');
 
 insert into botes (id_producte, talla) VALUES 
-('1','41');
+('3','41');
 
 insert into client (dni_usuari, nom, cognom, cognom2, data_naix, usuari, contrasenya, sexe, email) VALUES 
-('X5522891F', 'Alex', 'Rubtsov', '', '1996-03-02', 'arubtsov', MD5('".$Fat/3232."'), 'home', 'arubtsov@gmail.com'),
-('55522891E', 'Eric', 'Estivill', '', '2003-05-24', 'eestivill', MD5('".$Fat/3232."'), 'home', 'eestivill@gmail.com'),
-('85522891Y', 'Mada', 'Belivan', '', '1994-10-23', 'mbelivan', MD5('".$Fat/3232."'), 'home', 'mbelivan@gmail.com');
+('X5522891F', 'Alex', 'Rubtsov', '', '1996-03-02', 'arubtsov', MD5('Fat/3232'), 'home', 'arubtsov@gmail.com'),
+('55522891E', 'Eric', 'Estivill', 'Pont', '2003-05-24', 'eestivill', MD5('Fat/3232'), 'home', 'eestivill@gmail.com'),
+('85522891Y', 'Oleg', 'Blyznyuk', '', '1994-10-23', 'oblyznyuk', MD5('Fat/3232'), 'home', 'mbelivan@gmail.com');
 
 insert into client_individual (dni_usuari) values 
-('X5522891F');
+('X5522891F'), ('85522891Y');
 
-insert into client_colectiu (dni_usuari, num_familiar) values 
-('85522891Y', '1');
+insert into client_colectiu (dni_usuari) values 
+('55522891E'),
+('X5522891F');
 
 insert into client_federat (dni_usuari, num_federacio) values 
 ('85522891Y', '10000000');
@@ -229,6 +253,15 @@ end
 //
 
 DELIMITER //
+create trigger update_productes
+	before update on lloguer_producte
+	for each row
+	begin
+	insert into prod_elim values (id_producte, dni_usuari);
+	end;
+//
+
+DELIMITER //
 create procedure augmentarNumUsos(_id_producte int)
 begin
 	declare _num_usos int;
@@ -239,3 +272,5 @@ begin
     update producte set num_usos = _num_usos where id_producte=_id_producte;
 end
 //
+
+set foreign_key_checks=0;

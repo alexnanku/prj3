@@ -1,6 +1,7 @@
 package prj3;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Client {
     
@@ -103,6 +104,60 @@ public class Client {
 
     public void setContrasenya(String contrasenya) {
         this.contrasenya = contrasenya;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.dni);
+        hash = 23 * hash + Objects.hashCode(this.nom);
+        hash = 23 * hash + Objects.hashCode(this.cognom);
+        hash = 23 * hash + Objects.hashCode(this.cognom2);
+        hash = 23 * hash + Objects.hashCode(this.datanaixemnt);
+        hash = 23 * hash + Objects.hashCode(this.email);
+        hash = 23 * hash + Objects.hashCode(this.sexe);
+        hash = 23 * hash + Objects.hashCode(this.usuari);
+        hash = 23 * hash + Objects.hashCode(this.contrasenya);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Client other = (Client) obj;
+        if (!Objects.equals(this.dni, other.dni)) {
+            return false;
+        }
+        if (!Objects.equals(this.nom, other.nom)) {
+            return false;
+        }
+        if (!Objects.equals(this.cognom, other.cognom)) {
+            return false;
+        }
+        if (!Objects.equals(this.cognom2, other.cognom2)) {
+            return false;
+        }
+        if (!Objects.equals(this.email, other.email)) {
+            return false;
+        }
+        if (!Objects.equals(this.sexe, other.sexe)) {
+            return false;
+        }
+        if (!Objects.equals(this.usuari, other.usuari)) {
+            return false;
+        }
+        if (!Objects.equals(this.contrasenya, other.contrasenya)) {
+            return false;
+        }
+        return Objects.equals(this.datanaixemnt, other.datanaixemnt);
     }
 
     @Override
